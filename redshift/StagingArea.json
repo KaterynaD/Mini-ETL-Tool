@@ -1,0 +1,68 @@
+{
+"Tables":
+        [
+      {"name" : "analysts_2010",
+          "description" : "2010 analysts snapshot",
+          "scripts" : {"create" : {"file": "redshift/sql/create_analysts_yyyy.sql"},
+                                 "load" : {"file": "redshift/sql/copy_data.sql"},
+                                 "drop" : {"file": "redshift/sql/drop_table.sql"}}},
+          {"name" : "analysts_2011",
+          "description" : "2011 analysts snapshot",
+          "scripts" : {"create" : {"file": "redshift/sql/create_analysts_yyyy.sql"},
+                                 "load" : {"file": "redshift/sql/copy_data.sql"},
+                                 "drop" : {"file": "redshift/sql/drop_table.sql"}}},
+          {"name" : "analysts_2012",
+          "description" : "2012 analysts snapshot",
+          "scripts" : {"create" : {"file": "redshift/sql/create_analysts_yyyy.sql"},
+                                 "load" : {"file": "redshift/sql/copy_data.sql"},
+                                 "drop" : {"file": "redshift/sql/drop_table.sql"}}},
+          {"name" : "analysts_2013",
+          "description" : "2013 analysts snapshot",
+          "scripts" : {"create" : {"file": "redshift/sql/create_analysts_yyyy.sql"},
+                                 "load" : {"file": "redshift/sql/copy_data.sql"},
+                                 "drop" : {"file": "redshift/sql/drop_table.sql"}}},
+          {"name" : "analysts_2014",
+          "description" : "2014 analysts snapshot",
+          "scripts" : {"create" : {"file": "redshift/sql/create_analysts_yyyy.sql"},
+                                 "load" : {"file": "redshift/sql/copy_data.sql"},
+                                 "drop" : {"file": "redshift/sql/drop_table.sql"}}},
+          {"name" : "products",
+          "description" : "products dimension data in a hierarchical form",
+          "scripts" : {"create" : {"file": "redshift/sql/create_products.sql"},
+                                 "load" : {"file": "redshift/sql/copy_data.sql"},
+                                 "drop" : {"file": "redshift/sql/drop_table.sql"}}},     
+          {"name" : "cases",
+          "description" : "cases historical data",
+          "scripts" : {"create" : {"file": "redshift/sql/create_cases.sql"},
+                                 "load" : {"file": "redshift/sql/copy_data.sql",
+                                "OnSuccess": "./SendToQueue.py  CasesAreReadyForTransform"},
+                                 "drop" : {"file": "redshift/sql/drop_table.sql"}}},
+          {"name" : "logs",
+          "description" : "cases logs",
+          "scripts" : {"create" : {"file": "redshift/sql/create_logs.sql"},
+                                 "load" : {"file": "redshift/sql/copy_data.sql",
+                                "OnSuccess": "./SendToQueue.py  LogsAreReadyForTransform"},
+                                 "drop" : {"file": "redshift/sql/drop_table.sql"}}}      
+        ],
+"Placeholders" :
+[
+  {"name": "#bucket#",
+  "value":"kdsupportdata"}
+  ],
+        "OnError": {
+		"Status 404": ["Stop"],
+                "does not exist": [
+                        "Ignore"
+                ],
+                "AnyOther": [
+                        "Stop"
+                ]
+        },
+        "OnSuccessNotification":"./SendToETLSNS.py 'StagingArea #action# is done' 'ETL Success Completion Notification'",
+		"OnErrorNotification":"./SendToETLSNS.py 'Failed StagingArea #action#' '#error#' ",
+		"OnSuccessdrop": "echo './RedshiftLoadT.py ProjectResources.yml  redshift/StagingArea.json create' |at now",
+		"OnSuccesscreate": "echo './RedshiftLoadT.py ProjectResources.yml  redshift/StagingArea.json load' |at now",
+		"OnSuccessload": "echo './RedshiftLoadT.py ProjectResources.yml  redshift/SupportDW.json drop' |at now",
+        "Mode": "Sequential"
+}
+

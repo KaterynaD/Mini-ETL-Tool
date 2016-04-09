@@ -1,0 +1,59 @@
+{
+	"Tables": [{
+		"name": "analysts",
+		"description": "Current analysts snapshot",
+		"scripts": {
+			"create": {
+				"file": "postgres/sql/create_analysts_yyyy.sql"
+			},
+			"exec": {
+				"file": "postgres/sql/copy_new_data.sql"
+			},
+			"drop": {
+				"file": "postgres/sql/drop_table.sql"
+			}
+		}
+	}, {
+		"name": "cases",
+		"description": "Current Cases data",
+		"scripts": {
+			"create": {
+				"file": "postgres/sql/create_cases.sql"
+			},
+			"exec": {
+				"file": "postgres/sql/copy_new_data.sql"
+			},
+			"drop": {
+				"file": "postgres/sql/drop_table.sql"
+			}
+		}
+	}, {
+		"name": "logs",
+		"description": "current cases logs",
+		"scripts": {
+			"create": {
+				"file": "postgres/sql/create_logs.sql"
+			},
+			"exec": {
+				"file": "postgres/sql/copy_new_data.sql"
+			},
+			"drop": {
+				"file": "postgres/sql/drop_table.sql"
+			}
+		}
+	}],
+	"OnError": {
+		"1051": [
+			"Ignore"
+		],
+		"AnyOther": [
+			"Stop"
+		]
+	},
+	"OnSuccessNotification": "./SendToETLSNS.py 'New Data in Staging Area #action# is done' 'ETL Success Completion Notification'",
+	"OnErrorNotification": "./SendToETLSNS.py 'Failed New Data in Staging Area #action#' '#error#' ",
+	"OnSuccessdrop": "echo './PostgresLoadT.py postgres/Postgres.yml  postgres/NewDataForLoad.json create' |at now",
+	"OnSuccesscreate": "echo './PostgresLoadT.py postgres/Postgres.yml  postgres/NewDataForLoad.json exec' |at now",
+	"OnSuccessexec": "echo './PostgresLoadT.py postgres/Postgres.yml  postgres/SupportDW_NewData.json load' |at now",
+	"Mode": "Parallel"
+}

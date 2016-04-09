@@ -1,0 +1,43 @@
+{
+"Tables":
+        [ {"name" : "d_analysts",
+          "description" : "SCD type 2",
+          "scripts" : {"create" : {"file": "postgres/sql/create_d_analysts.sql"},
+                                 "load" : {"file": "postgres/sql/build_scdt2_d_analysts.sql"},
+                                 "drop" : {"file": "postgres/sql/drop_table.sql"}}},
+          {"name" : "d_products",
+          "description" : "flatten hierarchy dimension",
+          "scripts" : {"create" : {"file": "postgres/sql/create_d_products.sql"},
+                                 "load" : {"file": "postgres/sql/flatten_hierar_d_products.sql"},
+                                 "drop" : {"file": "postgres/sql/drop_table.sql"}}},
+          {"name" : "f_cases",
+          "description" : "cases fact table",
+          "scripts" : {"create" : {"file": "postgres/sql/create_f_cases.sql"},
+                                 "load" : {"file": "postgres/sql/insert_f_cases.sql"},
+                                 "drop" : {"file": "postgres/sql/drop_table.sql"}}}  ,
+                  {"name" : "merge_scdt2_d_analysts",
+          "description" : "It's a stored procedure, not a table to run periodicall updates of d_analysts",
+          "scripts" : {"create" : {"file": "postgres/sql/create_func_merge_scdt2_d_analysts.sql"},
+                                 "drop" : {"file": "postgres/sql/drop_func.sql"}}},
+                  {"name" : "merge_f_cases",
+          "description" : "It's a stored procedure, not a table to run periodicall updates of f_cases",
+          "scripts" : {"create" : {"file": "postgres/sql/create_func_merge_f_cases.sql"},
+                                 "drop" : {"file": "postgres/sql/drop_func.sql"}}}
+        ],
+        "OnError": {
+                "1051": [
+                        "Ignore"
+                ],
+                "AnyOther": [
+                        "Stop"
+                ]
+        },
+		"OnSuccessdrop": "echo './PostgresLoadT.py postgres/Postgres.yml  postgres/SupportDW.json create' |at now",
+		"OnSuccesscreate": "echo './PostgresLoadT.py postgres/Postgres.yml  postgres/SupportDW.json load' |at now",
+		"OnSuccessload": "./SendToQueue.py DataAreReadyForReports",
+        "OnSuccessNotification":"./SendToETLSNS.py 'Support DW #action# is done' 'ETL Success Completion Notification'",
+		"OnErrorNotification":"./SendToETLSNS.py 'Failed Support DW #action#' '#error#' ",
+        "Mode": "Sequential"
+}
+
+

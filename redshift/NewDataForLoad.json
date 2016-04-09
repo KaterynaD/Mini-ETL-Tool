@@ -1,0 +1,63 @@
+{
+	"Tables": [{
+		"name": "analysts",
+		"description": "Current analysts snapshot",
+		"scripts": {
+			"create": {
+				"file": "redshift/sql/create_analysts_yyyy.sql"
+			},
+			"load": {
+				"file": "redshift/sql/copy_data.sql"
+			},
+			"drop": {
+				"file": "redshift/sql/drop_table.sql"
+			}
+		}
+	}, {
+		"name": "cases",
+		"description": "Current Cases data",
+		"scripts": {
+			"create": {
+				"file": "redshift/sql/create_cases.sql"
+			},
+			"load": {
+				"file": "redshift/sql/copy_data.sql"
+			},
+			"drop": {
+				"file": "redshift/sql/drop_table.sql"
+			}
+		}
+	}, {
+		"name": "logs",
+		"description": "current cases logs",
+		"scripts": {
+			"create": {
+				"file": "redshift/sql/create_logs.sql"
+			},
+			"load": {
+				"file": "redshift/sql/copy_data.sql"
+			},
+			"drop": {
+				"file": "redshift/sql/drop_table.sql"
+			}
+		}
+	}],
+	"Placeholders": [{
+		"name": "#bucket#",
+		"value": "kdsupportdatanew"
+	}],
+	"OnError": {
+		"does not exist": [
+			"Ignore"
+		],
+		"AnyOther": [
+			"Stop"
+		]
+	},
+	"OnSuccessNotification": "./SendToETLSNS.py 'New Data in Staging Area #action# is done' 'ETL Success Completion Notification'",
+	"OnErrorNotification": "./SendToETLSNS.py 'Failed New Data in Staging Area #action#' '#error#' ",
+	"OnSuccessdrop": "echo './RedshiftLoadT.py ProjectResources.yml  redshift/NewDataForLoad.json create' |at now",
+	"OnSuccesscreate": "echo './RedshiftLoadT.py ProjectResources.yml  redshift/NewDataForLoad.json load' |at now",
+	"OnSuccessload": "echo './RedshiftLoadT.py ProjectResources.yml  redshift/SupportDW_NewData.json load' |at now",
+	"Mode": "Sequential"
+}

@@ -1,0 +1,17 @@
+{
+        "Tables": [{
+		"name": "CreateBucket",
+		"description": "Create a bucket for reports",
+		"scripts": {
+			"exec": {
+				"file": "redshift/sql/CreateNewBucket.bash",
+				"OnSuccess": "echo './RedshiftLoadT.py ProjectResources.yml redshift/TeamPerformanceReport.json unload' |at now"
+			}
+		}
+	}],        
+        "OnErrorNotification": "./SendToETLSNS.py 'Failed create bucket for Team Performance Report' '#error#'",
+        "Placeholders": [{
+                "name": "#bucket#",
+                "value": "kdsupportreports"
+        }]
+}

@@ -1,0 +1,52 @@
+{
+"Tables":
+        [ {"name" : "d_analysts",
+          "description" : "SCD type 2",
+          "scripts" : {"create" : {"file": "mysql/sql/create_d_analysts.sql"},
+                                 "load" : {"file": "mysql/sql/build_scdt2_d_analysts.sql"},
+                                 "drop" : {"file": "mysql/sql/drop_table.sql"}}},
+          {"name" : "d_products",
+          "description" : "flatten hierarchy dimension",
+          "scripts" : {"create" : {"file": "mysql/sql/create_d_products.sql"},
+                                 "load" : {"file": "mysql/sql/flatten_hierar_d_products.sql"},
+                                 "drop" : {"file": "mysql/sql/drop_table.sql"}}},
+          {"name" : "d_calendar",
+          "description" : "Calendar dimension as is. No transformation required",
+          "scripts" : {"create" : {"file": "mysql/sql/create_d_calendar.sql"},
+                                 "load" : {"file": "mysql/sql/copy_calendar.sql"},
+                                 "drop" : {"file": "mysql/sql/drop_table.sql"}}},
+          {"name" : "d_priorities",
+          "description" : "Priority and SLA dimenaion as is. No transformation required",
+          "scripts" : {"create" : {"file": "mysql/sql/create_d_priorities.sql"},
+                                 "load" : {"file": "mysql/sql/copy_priorities.sql"},
+                                 "drop" : {"file": "mysql/sql/drop_table.sql"}}},
+          {"name" : "f_cases",
+          "description" : "cases fact table",
+          "scripts" : {"create" : {"file": "mysql/sql/create_f_cases.sql"},
+                                 "load" : {"file": "mysql/sql/insert_f_cases.sql"},
+                                 "drop" : {"file": "mysql/sql/drop_table.sql"}}}  ,
+		  {"name" : "merge_scdt2_d_analysts",
+          "description" : "It's a stored procedure, not a table to run periodicall updates of d_analysts",
+          "scripts" : {"create" : {"file": "mysql/sql/create_proc_merge_scdt2_d_analysts.sql"},
+                                 "drop" : {"file": "mysql/sql/drop_proc.sql"}}},
+		  {"name" : "merge_f_cases",
+          "description" : "It's a stored procedure, not a table to run periodicall updates of f_cases",
+          "scripts" : {"create" : {"file": "mysql/sql/create_proc_merge_f_cases.sql"},
+                                 "drop" : {"file": "mysql/sql/drop_proc.sql"}}}  
+        ],
+        "OnError": {
+                "1051": [
+                        "Ignore"
+                ],
+                "AnyOther": [
+                        "Stop"
+                ]
+        },
+		"OnSuccessdrop": "echo './MySQLLoadT.py mysql/MySQL.yml  mysql/SupportDW.json create' |at now",
+		"OnSuccesscreate": "echo './MySQLLoadT.py mysql/MySQL.yml  mysql/SupportDW.json load' |at now",
+		"OnSuccessload": "./SendToQueue.py DataAreReadyForReports",
+        "OnSuccessNotification":"./SendToETLSNS.py 'Support DW #action# is done' 'ETL Success Completion Notification'",
+		"OnErrorNotification":"./SendToETLSNS.py 'Failed Support DW #action#' '#error#' ",
+        "Mode": "Sequential"
+}
+

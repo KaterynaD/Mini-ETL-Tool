@@ -1,0 +1,16 @@
+Region: "us-west-2"
+RDS:
+  DBName: "MyTest"
+  DBInstanceIdentifier: "MyTest"
+  AllocatedStorage: 5
+  DBInstanceClass: "db.t2.micro"
+  Engine: "mariadb"
+  MasterUsername: "masteruser"
+  MasterUserPassword: "Kaktus2015"
+  Port: "3306"
+  PubliclyAccessible: "True"
+  EngineVersion: "10.0.17"
+  License: "general-public-license"
+Queue:
+  Name: "DataReadiness"
+

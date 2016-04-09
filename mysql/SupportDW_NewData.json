@@ -1,0 +1,23 @@
+{
+"Tables":
+        [ {"name" : "d_analysts",
+          "description" : "SCD type 2",
+          "scripts" : {"load" : {"file": "mysql/sql/merge_scdt2_d_analysts.sql"}}},
+          {"name" : "f_cases",
+          "description" : "cases fact table",
+          "scripts" : {"load" : {"file": "mysql/sql/merge_f_cases.sql"}}}
+        ],
+	"OnError": {
+		"1051": [
+			"Ignore"
+		],
+		"AnyOther": [
+			"Stop"
+		]
+	},
+    "OnSuccessNotification":"./SendToETLSNS.py 'New Load to Support DW  is done' 'ETL Success Completion Notification'",
+	"OnErrorNotification":"./SendToETLSNS.py 'Failed New Load to Support DW' '#error#' ",
+	"OnSuccess": "./SendToQueue.py DataAreReadyForReports",
+	"Mode": "Sequential"
+}
+

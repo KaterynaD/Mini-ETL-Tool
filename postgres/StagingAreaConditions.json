@@ -1,0 +1,23 @@
+{
+        "Tables": [{
+                "name": "FilesExistsTest",
+                "description": "Testing if all needed files exist",
+                "scripts": {
+                        "exec": {
+                                "file": "mysql/sql/TestFileExists.bash"
+                        }
+                }
+        }],
+        "OnError": {
+                "AnyOther": [
+                        "echo './CLILoadT.py postgres/StagingAreaConditions.json  2' |at now + 1min",
+                        "echo './CLILoadT.py postgres/StagingAreaConditions.json  3' |at now + 2min",
+                        "echo './CLILoadT.py postgres/StagingAreaConditions.json  4' |at now + 3min",
+                        "Stop"
+                ]
+        },
+        "OnSuccessNotification": "./SendToETLSNS.py 'Historical Files for load exist' 'ETL Success Completion Notification'",
+        "OnErrorNotification": "./SendToETLSNS.py 'Failed to find Historical Files for load' 'Files do not exist'",
+        "OnSuccessexec": "echo './PostgresLoadT.py postgres/Postgres.yml  postgres/StagingArea.json drop' |at now"
+}
+

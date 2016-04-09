@@ -1,0 +1,1 @@
+cat data/calendar.csv | psql --host=#host# --port=#RDS.Port# --username=#RDS.MasterUsername# --dbname=#RDS.DBName# --set=ON_ERROR_STOP=true  -c "COPY d_calendar FROM STDIN delimiter ',' csv  quote '\"'"

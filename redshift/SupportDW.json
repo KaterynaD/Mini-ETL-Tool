@@ -1,0 +1,51 @@
+{
+"Tables":
+        [ {"name" : "d_analysts",
+          "description" : "SCD type 2",
+          "scripts" : {"create" : {"file": "redshift/sql/create_d_analysts.sql"},
+                                 "load" : {"file": "redshift/sql/build_scdt2_d_analysts.sql"},
+                                 "drop" : {"file": "redshift/sql/drop_table.sql"}}},
+          {"name" : "d_products",
+          "description" : "flatten hierarchy dimension",
+          "scripts" : {"create" : {"file": "redshift/sql/create_d_products.sql"},
+                                 "load" : {"file": "redshift/sql/flatten_hierar_d_products.sql"},
+                                 "drop" : {"file": "redshift/sql/drop_table.sql"}}},
+          {"name" : "d_calendar",
+          "description" : "Calendar dimension as is. No transformation required",
+          "scripts" : {"create" : {"file": "redshift/sql/create_d_calendar.sql"},
+                                 "load" : {"file": "redshift/sql/copy_calendar.sql"},
+                                 "drop" : {"file": "redshift/sql/drop_table.sql"}}},
+          {"name" : "d_priorities",
+          "description" : "Priority and SLA dimenaion as is. No transformation required",
+          "scripts" : {"create" : {"file": "redshift/sql/create_d_priorities.sql"},
+                                 "load" : {"file": "redshift/sql/copy_priorities.sql"},
+                                 "drop" : {"file": "redshift/sql/drop_table.sql"}}},
+          {"name" : "f_cases",
+          "description" : "cases fact table",
+          "scripts" : {"create" : {"file": "redshift/sql/create_f_cases.sql"},
+                                 "load" : {"file": "redshift/sql/insert_f_cases.sql",
+                                "OnSuccess": "./SendToQueue.py CasesAreReadyForReports"},
+                                 "drop" : {"file": "redshift/sql/drop_table.sql"}}}            
+        ],
+        "OnError": {
+		"Status 404": ["Stop"],
+                "does not exist": [
+                        "Ignore"
+                ],
+                "AnyOther": [
+                        "Stop"
+                ]
+        },
+		"OnSuccessdrop": "echo './RedshiftLoadT.py ProjectResources.yml  redshift/SupportDW.json create' |at now",
+		"OnSuccesscreate": "echo './RedshiftLoadT.py ProjectResources.yml  redshift/SupportDW.json load' |at now",
+		"OnSuccessload": "./SendToQueue.py DataAreReadyForReports",
+        "OnSuccessNotification":"./SendToETLSNS.py 'Support DW #action# is done' 'ETL Success Completion Notification'",
+		"OnErrorNotification":"./SendToETLSNS.py 'Failed Support DW #action#' '#error#' ",
+        "Mode": "Sequential",
+"Placeholders" :
+[
+  {"name": "#bucket#",
+  "value":"kdsupportdata"}
+  ]
+}
+

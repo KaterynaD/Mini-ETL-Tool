@@ -1,0 +1,28 @@
+Region: "us-west-2"
+RDS:
+  DBName: "MyTest"
+  DBInstanceIdentifier: "MyTest"
+  AllocatedStorage: 5
+  DBInstanceClass: "db.t1.micro"
+  Engine: "MySQL"
+  MasterUsername: "masteruser"
+  MasterUserPassword: "Kaktus2015"
+  Port: "3306"
+  PubliclyAccessible: "True"
+  EngineVersion: "5.6.23"
+  License: "general-public-license"
+RedshiftCluster:
+  Endpoint:
+  DBName: "supportdw"
+  ClusterIdentifier: "Support"
+  ClusterType: "single-node"
+  NodeType: "dc1.large"
+  MasterUsername: "masteruser"
+  MasterUserPassword: "Kaktus2015"
+  Port: "5439"
+  PubliclyAccessible: "True"
+  Encrypted: "False"
+Access:
+  RoleArn: "arn:aws:iam::757107622481:role/TempBucketsAccessRole"
+Queue:
+  Name: "DataReadiness"

@@ -1,0 +1,20 @@
+{
+	"Tables": [{
+		"name": "TeamPerformance",
+		"description": "Team Performance report",
+		"scripts": {
+			"extract": {
+				"file": "postgres/sql/TeamPerformance.sql",
+				"tofile": "reports/TeamPerformancePostgres.csv",
+				"delimiter": ",",
+				"quotechar": ":",
+				"quoting": "QUOTE_NONE",
+				"doublequote": "True",
+				"escapechar": "\\",
+				"lineterminator": "\r\n"
+			}
+		}
+	}],
+	"OnSuccessNotification": "./SendToETLSNS.py 'Team Performance Report is ready' 'ETL Success Completion Notification'",
+	"OnErrorNotification": "./SendToETLSNS.py 'Failed run Team Performance Report' '#error#'"
+}

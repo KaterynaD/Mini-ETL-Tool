@@ -1,0 +1,16 @@
+Region: "us-west-2"
+RDS:
+  DBName: "MyTest"
+  DBInstanceIdentifier: "MyTest"
+  AllocatedStorage: 5
+  DBInstanceClass: "db.m1.small"
+  Engine: "postgres"
+  MasterUsername: "masteruser"
+  MasterUserPassword: "Kaktus2015"
+  Port: "5432"
+  PubliclyAccessible: "True"
+  EngineVersion: "9.4.5"
+  License: "postgresql-license"
+Queue:
+  Name: "DataReadiness"
+

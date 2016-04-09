@@ -1,0 +1,24 @@
+{
+        "Tables": [{
+                "name": "FilesExistsTestAndLoadToBucket",
+                "description": "Testing if all needed files exist and load them to a bucket",
+                "scripts": {
+                        "exec": {
+                                "file": "redshift/sql/TestNewFileExists.bash"
+                        }
+                }
+        }],
+        "OnError": {
+                "AnyOther": [
+                        "echo './CLILoadT.py redshift/StagingAreaConditionsNewData.json  2' |at now + 1min",
+                        "echo './CLILoadT.py redshift/StagingAreaConditionsNewData.json  3' |at now + 2min",
+                        "echo './CLILoadT.py redshift/StagingAreaConditionsNewData.json  4' |at now + 3min",
+                        "Stop"
+                ]
+        },
+        "OnSuccessNotification": "./SendToETLSNS.py 'New Files for load exist' 'ETL Success Completion Notification'",
+        "OnErrorNotification": "./SendToETLSNS.py 'Failed to find New Files for load' 'Files do not exist'",
+        "OnSuccessexec": "echo './RedshiftLoadT.py ProjectResources.yml  redshift/NewDataForLoad.json drop' |at now",
+        "Mode": "Sequential"
+}
+

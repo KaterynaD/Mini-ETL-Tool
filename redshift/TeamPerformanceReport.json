@@ -1,0 +1,27 @@
+{
+	"Tables": [
+         {
+		"name": "TeamPerformance",
+		"description": "Team Performance report",
+		"scripts": {
+			"unload": {
+				"file": "redshift/sql/unload_TeamPerformance.sql"
+			}
+		}
+	}, {
+		"name": "CopyReportFromBucket",
+		"description": "Copy files from a bucket to local file system",
+		"scripts": {
+			"exec": {
+				"file": "redshift/sql/CopyFromBucket.bash"
+			}
+		}
+	}],
+	"OnSuccessunload": "echo './CLILoadT.py redshift/TeamPerformanceReport.json' |at now",
+	"OnSuccessexec": "./SendToETLSNS.py 'Team Performance Report is ready' 'ETL Success Completion Notification'",
+	"OnErrorNotification": "./SendToETLSNS.py 'Failed run Team Performance Report' '#error#'",
+	"Placeholders": [{
+		"name": "#bucket#",
+		"value": "kdsupportreports"
+	}]
+}

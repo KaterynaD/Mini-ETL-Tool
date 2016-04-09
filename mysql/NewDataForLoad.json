@@ -1,0 +1,59 @@
+{
+	"Tables": [{
+		"name": "analysts",
+		"description": "Current analysts snapshot",
+		"scripts": {
+			"create": {
+				"file": "mysql/sql/create_analysts_yyyy.sql"
+			},
+			"load": {
+				"file": "mysql/sql/copy_new_data.sql"
+			},
+			"drop": {
+				"file": "mysql/sql/drop_table.sql"
+			}
+		}
+	}, {
+		"name": "cases",
+		"description": "Current Cases data",
+		"scripts": {
+			"create": {
+				"file": "mysql/sql/create_cases.sql"
+			},
+			"load": {
+				"file": "mysql/sql/copy_new_data.sql"
+			},
+			"drop": {
+				"file": "mysql/sql/drop_table.sql"
+			}
+		}
+	}, {
+		"name": "logs",
+		"description": "current cases logs",
+		"scripts": {
+			"create": {
+				"file": "mysql/sql/create_logs.sql"
+			},
+			"load": {
+				"file": "mysql/sql/copy_new_data.sql"
+			},
+			"drop": {
+				"file": "mysql/sql/drop_table.sql"
+			}
+		}
+	}],
+	"OnError": {
+		"1051": [
+			"Ignore"
+		],
+		"AnyOther": [
+			"Stop"
+		]
+	},
+	"OnSuccessNotification": "./SendToETLSNS.py 'New Data in Staging Area #action# is done' 'ETL Success Completion Notification'",
+	"OnErrorNotification": "./SendToETLSNS.py 'Failed New Data in Staging Area #action#' '#error#' ",
+	"OnSuccessdrop": "echo './MySQLLoadT.py mysql/MySQL.yml  mysql/NewDataForLoad.json create' |at now",
+	"OnSuccesscreate": "echo './MySQLLoadT.py mysql/MySQL.yml  mysql/NewDataForLoad.json load' |at now",
+	"OnSuccessload": "echo './MySQLLoadT.py mysql/MySQL.yml  mysql/SupportDW_NewData.json load' |at now",
+	"Mode": "Parallel"
+}
