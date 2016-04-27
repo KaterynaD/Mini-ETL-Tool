@@ -131,7 +131,10 @@ Flatten hierarchy dimension, calendar dimension, a fact table</i>.
 <p><b>Source Data</b>: Analysts table is from an HR system current data and historical data from files, Cases, Products tables and a text Logs file are from a Support application,  Support department  provided a small Excel file with SLA per cases priority. 
 The data used in the project are fabricated, test data. For simplicity I do not include some details which usually you can find in this kind of data (Case Subject, analysts emails etc) if they are not used to calculate analysts performance KPIs. The data for Calendar dimension is usally built in an Excel by business with important companies holiday's fiscal year data etc.  
 Please see SourceDataERD.jpg and StarSchema.jpg for details regarding each table
-
+<img src="https://github.com/KaterynaD/Mini-ETL-Tool/blob/master/SourceDataERD.jpg?raw=true"></img>
+<p>Source Data diagram
+<img src="https://github.com/KaterynaD/Mini-ETL-Tool/blob/master/StarScheama.jpg?raw=true"></img>
+<p>Star schema diagram
 <p>Transformation to Star Schema:
 <ol>
 <li>Analysts: Analysts can change their names, add more skills in profiles and move between teams. Support department needs to analyze performance by team so they keep track of such movements between the teams for years and provided the data to build the data warehouse analysts table. Slowly Changing Dimension Type 2 will be used in the data warehouse for D_Analysts dimension. We need a surragate key (id) in this dimension, Start Date and End Date when an analysts was in a specific team and isActiveFlag to simplify queries. There was also to request from Support department to track skills changes for a future analysis. We do not track changes in the names because the changes are not relevant to the project purpose. See transformation SQLs in sql/build_scdt2_d_analysts.sql for the initial load and sql/merge_scdt2_d_analysts for a periodic update.
