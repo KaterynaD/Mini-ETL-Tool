@@ -124,6 +124,8 @@ to get endpoints of the resources based on the known names in YAML resources in 
 
 <H2>Support Department Data Warehouse</H2>
 
+<p>You can review reports based on these data in <a href="https://public.tableau.com/views/SupportDW/About?:embed=y&:display_count=yes&:showTabs=y">Tableau</a></p>
+
 <p>The star schema is populated with a sample data set. It includes: <i>Slowly Changing Dimension type 2, 
 Flatten hierarchy dimension, calendar dimension, a fact table</i>. 
 
